@@ -40,7 +40,7 @@ def is_user(ctx):
 
 @bot.event
 async def on_ready():
-    channel = bot.get_channel(952400947823398955)
+    channel = bot.get_channel(944347370739605555)
     print(f'{bot.user.name} has connected to Discord!')
     await channel.send("WTF Do You Want From Me")
 
