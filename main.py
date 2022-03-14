@@ -31,7 +31,7 @@ ToDoList = {
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='~')
 
 
 
@@ -147,5 +147,11 @@ async def Today(ctx, day):
         counter+=1
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
     await ctx.send(embed=embed)
+
+@bot.event
+async def on_message(ctx, message):
+    if message.content == "Bye Zephyr :poggy:" or "Bye Zephy :lil_poggy" or "Bye Zephyr :lil_poggy" or "Bye Zephyr!":
+        await ctx.send("Bye Bye!")
+
 
 bot.run(TOKEN)
