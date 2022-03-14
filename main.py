@@ -94,8 +94,8 @@ async def ToDoThisWeek(ctx):
         tasks.clear()
 
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
-    channel = bot.get_channel(850499245760839701)
-    await channel.send("@&826117559023435787")
+    channel = bot.get_channel(886637950962659488)
+    await channel.send("<@&826117559023435787>")
     await channel.send(embed=embed)
 
 @ToDoThisWeek.error
@@ -108,9 +108,9 @@ async def error(ctx, error):
 
 @bot.command(name="DescSet", help="Shows What Is Due Today!")
 @commands.check(is_user)
-async def desc(ctx, desc):
+async def desc(ctx, *args):
     global description
-    description = desc
+    description = ' '.join(args[0:])
     await ctx.send("Description set!")
 
 @bot.command(name="ToDoSet", help="Set The Deliverables Due Each Day")
