@@ -122,10 +122,15 @@ async def ToDoSet(ctx, *args):
     print(ToDoList[day])
     await ctx.send("Done")
 
+@bot.command(name="ToDoClear", help="Set The Deliverables Due Each Day")
+@commands.check(is_user)
+async def ToDoSet(ctx, day):
+    day = day.title()
+    ToDoList[day].clear()
+    await ctx.send("Done")
 
 
-
-@bot.command(name="Today", help="Shows What Is Due Today!")
+@bot.command(name="DueToday", help="Shows What Is Due Today!")
 async def Today(ctx):
     day = calendar.day_name[date.today().weekday()]
     embed=discord.Embed(title="What's Due " + day + " ?", color=discord.Color.purple())
@@ -148,10 +153,20 @@ async def Today(ctx, day):
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
     await ctx.send(embed=embed)
 
-@bot.event
-async def on_message(ctx, message):
-    if message.content == "Bye Zephyr :poggy:" or "Bye Zephy :lil_poggy" or "Bye Zephyr :lil_poggy" or "Bye Zephyr!":
-        await ctx.send("Bye Bye!")
+@bot.command(name="ToDoUpdate", help="Shows What Is Due Today!")
+@has_permissions(administrator=True)
+async def ToDoThisWeek(ctx):
+    embed=discord.Embed(title="What's Due This Week?", description=description, color=discord.Color.purple())
+    tasks = []
+    for x in days:
+        for y in range(0, len(ToDoList[x])):
+            tasks.append(ToDoList[x][y])
+        deliverables = '\n'.join(tasks)
+        embed.add_field(name= str(x) + ":", value=deliverables, inline=False)
+        tasks.clear()
 
+    embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
+    channel = bot.get_channel(886637950962659488)
+    await channel.send(embed=embed)
 
 bot.run(TOKEN)
