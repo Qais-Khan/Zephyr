@@ -53,7 +53,9 @@ async def suby(ctx):
         'Kinda cool sometimes',
         'Dresses like an aunty lol',
         'Who?',
-        'Imagine Being a BME defect lol'
+        'Imagine Being a BME defect lol',
+        'Such a simp (Courtesy of Lucas)',
+        'Silly Suby'
     ]
     response = random.choice(Wisdom)
     await ctx.send(response)
@@ -74,9 +76,9 @@ async def jokes(ctx):
 async def jokes(ctx):
     embed=discord.Embed(title="Commands", color=discord.Color.purple())
     embed.add_field(name="Joke", value="Tells A Great Dad Joke", inline=False)
-    embed.add_field(name="Suby", value="Tells The Cold Hard Truth")
-    embed.add_field(name="DueToday", value="Lets You Know What's Due Today!") 
-    embed.add_field(name="Due", value="Lets You Know What's Due On A Given Day!") 
+    embed.add_field(name="Suby", value="Tells The Cold Hard Truth",inline=False)
+    embed.add_field(name="Today", value="Lets You Know What's Due Today!", inline=False) 
+    embed.add_field(name="Due", value="Lets You Know What's Due On A Given Day!",inline=False) 
     embed.set_footer(text="Help requested by: {}".format(ctx.author.display_name))
     await ctx.send(embed=embed)
 
@@ -168,5 +170,18 @@ async def ToDoThisWeek(ctx):
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
     channel = bot.get_channel(886637950962659488)
     await channel.send(embed=embed)
+
+@bot.command(name='P', help='Hide your plays')
+async def clear(ctx, amount=4):
+    await ctx.channel.purge(limit=amount)
+
+@bot.event
+async def on_message(message):
+    await bot.process_commands(message)
+    if message.content.capitalize() in ['Gn zephy <:lil_poggy:934689146344190033>', 'Gn zephy <:poggy:934688467538030622>', 'Gn zephy',]:
+        await message.reply('Gn ' + str(message.author.display_name) + "!")
+    if '.move' in message.content:
+            await message.channel.purge(limit=4)
+        
 
 bot.run(TOKEN)
