@@ -172,7 +172,7 @@ async def ToDoThisWeek(ctx):
     await channel.send(embed=embed)
 
 @bot.command(name='P', help='Hide your plays')
-async def clear(ctx, amount=4):
+async def clear(ctx, amount=3):
     await ctx.channel.purge(limit=amount)
 
 @bot.event
