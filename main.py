@@ -172,7 +172,7 @@ async def ToDoThisWeek(ctx):
     await channel.send(embed=embed)
 
 @bot.command(name='P', help='Hide your plays')
-async def clear(ctx, amount=3):
+async def clear(ctx, amount=4):
     await ctx.channel.purge(limit=amount)
 
 @bot.event
@@ -181,7 +181,7 @@ async def on_message(message):
     if message.content.capitalize() in ['Gn zephy <:lil_poggy:934689146344190033>', 'Gn zephy <:poggy:934688467538030622>', 'Gn zephy',]:
         await message.reply('Gn ' + str(message.author.display_name) + "!")
     if '.move' in message.content:
-            await message.channel.purge(limit=4)
+            await message.channel.purge(limit=3)
         
 
 bot.run(TOKEN)
