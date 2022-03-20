@@ -34,7 +34,7 @@ ToDoList = [
 load_dotenv()
 MONGO_KEY = os.getenv('MONGO_KEY')
 TOKEN = os.getenv('DISCORD_TOKEN')
-bot = commands.Bot(command_prefix='-')
+bot = commands.Bot(command_prefix='~')
 client = pymongo.MongoClient(MONGO_KEY)
 db = client.test
 
