@@ -188,11 +188,18 @@ async def ToDoSet(ctx, day):
 @bot.command(name="DueToday", help="Shows What Is Due Today!")
 async def Today(ctx):
     day = calendar.day_name[date.today().weekday()]
-    embed=discord.Embed(title="What's Due " + day + " ?", color=discord.Color.purple())
-    counter = 1
-    for x in range(len(ToDoList[day])):
-        embed.add_field(name= str(counter) + ":", value=ToDoList[day][x], inline=False)
-        counter+=1
+    counter = 0
+    for x in days:
+        if day == x:
+            break
+        counter +=1
+    cursor = toDo.find()[counter]
+    desc = []
+    for x in cursor[day]:
+        desc.append(x + '\n')
+    tasks = ' '.join(desc)
+    
+    embed=discord.Embed(title="What's Due " + day + " ?", description = tasks, color=discord.Color.purple())
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
     await ctx.send(embed=embed)
     
