@@ -22,8 +22,8 @@ from pandas import describe_option
 days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 ToDoList = [
-  {"Monday" : ['pain'],'index':0},
-  {"Tuesday" : ['pain'],'index':1},
+  {"Monday" : [],'index':0},
+  {"Tuesday" : [],'index':1},
   {"Wednesday" : [],'index':2},
   {"Thursday" : [], 'index':3},
   {"Friday" : [],'index':4},
