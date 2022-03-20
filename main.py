@@ -102,12 +102,15 @@ async def jokes(ctx):
 async def ToDoThisWeek(ctx):
     embed=discord.Embed(title="What's Due This Week?", description=description, color=discord.Color.purple())
     tasks = []
+    counter = 0
     for x in days:
-        for y in range(0, len(ToDoList[x])):
-            tasks.append(ToDoList[x][y])
+        cursor = toDo.find()[counter]
+        for y in range(0, len(cursor[x])):
+            tasks.append(cursor[x][y])
         deliverables = '\n'.join(tasks)
         embed.add_field(name= str(x) + ":", value=deliverables, inline=False)
         tasks.clear()
+        counter+=1
 
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
     channel = bot.get_channel(886637950962659488)
@@ -120,7 +123,30 @@ async def error(ctx, error):
         text = "Sorry {}, you do not have permissions to do that!".format(ctx.message.author)
         await bot.send_message(ctx.message.channel, text)
 
+@bot.command(name="ToDoUpdate", help="Shows What Is Due Today!")
+@has_permissions(administrator=True)
+async def ToDoThisWeek(ctx):
+    embed=discord.Embed(title="What's Due This Week?", description=description, color=discord.Color.purple())
+    tasks = []
+    counter = 0
+    for x in days:
+        cursor = toDo.find()[counter]
+        for y in range(0, len(cursor[x])):
+            tasks.append(cursor[x][y])
+        deliverables = '\n'.join(tasks)
+        embed.add_field(name= str(x) + ":", value=deliverables, inline=False)
+        tasks.clear()
+        counter+=1
 
+    embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
+    channel = bot.get_channel(826267281696489512)
+    await channel.send(embed=embed)
+
+@ToDoThisWeek.error
+async def error(ctx, error):
+    if isinstance(error, MissingPermissions):
+        text = "Sorry {}, you do not have permissions to do that!".format(ctx.message.author)
+        await bot.send_message(ctx.message.channel, text)
 
 @bot.command(name="DescSet")
 @commands.check(is_user)
@@ -148,7 +174,14 @@ async def ToDoSet(ctx, *args):
 @commands.check(is_user)
 async def ToDoSet(ctx, day):
     day = day.title()
-    ToDoList[day].clear()
+    counter = 0
+    for x in days:
+        if day == x:
+            break
+        counter +=1
+    toDo.update_one({'index': counter}, {'$set': {day: []}})
+    cursor = toDo.find()[counter]
+    print(cursor[day])
     await ctx.send("Done")
 
 
@@ -181,40 +214,29 @@ async def Today(ctx, day):
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
     await ctx.send(embed=embed)
 
-@bot.command(name="ToDoUpdate", help="Shows What Is Due Today!")
-@has_permissions(administrator=True)
-async def ToDoThisWeek(ctx):
-    embed=discord.Embed(title="What's Due This Week?", description=description, color=discord.Color.purple())
-    tasks = []
-    for x in days:
-        for y in range(0, len(ToDoList[x])):
-            tasks.append(ToDoList[x][y])
-        deliverables = '\n'.join(tasks)
-        embed.add_field(name= str(x) + ":", value=deliverables, inline=False)
-        tasks.clear()
-
-    embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
-    channel = bot.get_channel(886637950962659488)
-    await channel.send(embed=embed)
-
 @bot.command(name='P', help='Hide your plays')
 async def clear(ctx, amount=3):
     await ctx.channel.purge(limit=amount)
 
 @bot.event
 async def on_message(message):
+    am = discord.AllowedMentions(
+            users=False,
+            roles=False,
+            everyone=False
+        )
     await bot.process_commands(message)
     if 'Gn zephy' in message.content.capitalize() :
-        await message.reply('Gn ' + str(message.author.display_name) + "!")
+        await message.reply('Gn ' + str(message.author.display_name) + "!", allowed_mentions = am)
     if '.move' in message.content:
         await message.channel.purge(limit=3)
     if '!move' in message.content:
         time.sleep(0.25)
         await message.channel.purge(limit=4)
     if 'Hi zephy' in message.content.capitalize() :
-        await message.reply('Hi ' + str(message.author.display_name) + "! <:poggy:934688467538030622>")
+        await message.reply('Hi ' + str(message.author.display_name) + "! <:poggy:934688467538030622>", allowed_mentions = am)
     if 'Hey zephy' in message.content.capitalize() :
-        await message.reply('Hey ' + str(message.author.display_name) + "! <:poggy:934688467538030622>")
+        await message.reply('Hey ' + str(message.author.display_name) + "! <:poggy:934688467538030622>", allowed_mentions = am)
 
 
 
