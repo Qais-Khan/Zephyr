@@ -215,6 +215,7 @@ async def Today(ctx, day):
     await ctx.send(embed=embed)
 
 @bot.command(name='P', help='Hide your plays')
+@has_permissions(administrator=True)
 async def clear(ctx, amount=3):
     await ctx.channel.purge(limit=amount)
 
@@ -225,14 +226,17 @@ async def on_message(message):
             roles=False,
             everyone=False
         )
+
     await bot.process_commands(message)
     if 'Gn zephy' in message.content.capitalize() :
         await message.reply('Gn ' + str(message.author.display_name) + "!", allowed_mentions = am)
     if '.move' in message.content:
-        await message.channel.purge(limit=3)
+        if message.author.guild_permissions.administrator == True:
+            await message.channel.purge(limit=3)
     if '!move' in message.content:
-        time.sleep(0.25)
-        await message.channel.purge(limit=4)
+        if message.author.guild_permissions.administrator == True:
+                time.sleep(0.25)
+                await message.channel.purge(limit=4)
     if 'Hi zephy' in message.content.capitalize() :
         await message.reply('Hi ' + str(message.author.display_name) + "! <:poggy:934688467538030622>", allowed_mentions = am)
     if 'Hey zephy' in message.content.capitalize() :
