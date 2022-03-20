@@ -2,3 +2,4 @@ discord.py
 dadjokes
 python-dotenv
 pandas
+pymongo
