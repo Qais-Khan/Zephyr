@@ -3,3 +3,4 @@ dadjokes
 python-dotenv
 pandas
 pymongo
+pymongo[srv]
