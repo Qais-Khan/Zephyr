@@ -2,13 +2,13 @@
 from multiprocessing.connection import deliver_challenge
 import os
 import random
-import sys
 import time
 import discord
-import calendar
+import datetime
 import pymongo
+import pytz
 
-from datetime import date
+from pytz import timezone
 from discord.ext import commands
 from dotenv import load_dotenv
 from dadjokes import Dadjoke
@@ -113,8 +113,7 @@ async def ToDoThisWeek(ctx):
         counter+=1
 
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
-    channel = bot.get_channel(886637950962659488)
-    await channel.send("<@&826117559023435787>")
+    channel = bot.get_channel(826267281696489512)
     await channel.send(embed=embed)
 
 @ToDoThisWeek.error
@@ -187,21 +186,18 @@ async def ToDoSet(ctx, day):
 
 @bot.command(name="DueToday", help="Shows What Is Due Today!")
 async def Today(ctx):
-    day = calendar.day_name[date.today().weekday()]
-    counter = 0
-    for x in days:
-        if day == x:
-            break
-        counter +=1
-    cursor = toDo.find()[counter]
-    desc = []
-    for x in cursor[day]:
-        desc.append(x + '\n')
-    tasks = ' '.join(desc)
+    my_timezone=timezone('US/Pacific')
+    day = datetime.date.today()
+    print(day)
+    # cursor = toDo.find()[day]
+    # desc = []
+    # for x in cursor[days[day]]:
+    #     desc.append(x + '\n')
+    # tasks = ' '.join(desc)
     
-    embed=discord.Embed(title="What's Due " + day + " ?", description = tasks, color=discord.Color.purple())
-    embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
-    await ctx.send(embed=embed)
+    # embed=discord.Embed(title="What's Due " + day + " ?", description = tasks, color=discord.Color.purple())
+    # embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
+    # await ctx.send(embed=embed)
     
 
 @bot.command(name="Due", help="Shows What Is Due On a Given Day!")
