@@ -2,11 +2,13 @@
 from multiprocessing.connection import deliver_challenge
 import os
 import random
+import re
 import time
 import discord
 import datetime
 import pymongo
 import pytz
+import requests
 
 from pytz import timezone
 from discord.ext import commands
@@ -34,9 +36,11 @@ ToDoList = [
 load_dotenv()
 MONGO_KEY = os.getenv('MONGO_KEY')
 TOKEN = os.getenv('DISCORD_TOKEN')
-bot = commands.Bot(command_prefix='~')
+bot = commands.Bot(command_prefix='-')
 client = pymongo.MongoClient(MONGO_KEY)
 db = client.test
+url = 'https://getpickuplines.herokuapp.com/lines/random'
+
 
 if "To_Do" not in db.list_collection_names():
     db.create_collection("To_Do")
@@ -52,7 +56,7 @@ def is_user(ctx):
 
 @bot.event
 async def on_ready():
-    channel = bot.get_channel(944347370739605555)
+    channel = bot.get_channel(952400947823398955)
     print(f'{bot.user.name} has connected to Discord!')
     await channel.send("WTF Do You Want From Me")
 
@@ -74,9 +78,9 @@ async def suby(ctx):
     response = random.choice(Wisdom)
     await ctx.send(response)
 
-# @bot.command(name='Nuke', help='Nuke the Channel')
-# async def clear(ctx, amount = 100):
-#     await ctx.channel.purge(limit=amount)
+@bot.command(name='Nuke', help='Nuke the Channel')
+async def clear(ctx, amount = 120):
+    await ctx.channel.purge(limit=amount)
 
 @bot.command(name="Joke", help="Tells a Fantastic Dad Joke")
 async def jokes(ctx):
@@ -85,13 +89,30 @@ async def jokes(ctx):
     embed.set_footer(text="Joke requested by: {}".format(ctx.author.display_name))
     await ctx.send(embed=embed)
 
+@bot.command(name="Flirt", help="Steals your heart")
+async def flirt(ctx, name = 'nothing'):
+
+    am = discord.AllowedMentions(
+            users=False,
+            roles=False,
+            everyone=False
+        )
+
+    req = requests.get(url)
+    if (name != 'nothing'):
+        await ctx.send(name + ', ' + req.json()['line'], allowed_mentions = am)
+    else:
+        embed=discord.Embed(title="Dad Jokes", description=req.json()['line'], color=discord.Color.purple())
+        embed.set_footer(text="Joke requested by: {}".format(ctx.author.display_name))
+        await ctx.send(embed=embed)
 
 @bot.command(name="commands", help="Displays this list of Commands")
 async def jokes(ctx):
     embed=discord.Embed(title="Commands", color=discord.Color.purple())
     embed.add_field(name="Joke", value="Tells A Great Dad Joke", inline=False)
-    embed.add_field(name="Suby", value="Tells The Cold Hard Truth",inline=False)
-    embed.add_field(name="DueToday", value="Lets You Know What's Due Today!", inline=False) 
+    embed.add_field(name="Flirt", value="Steals Your Heart", inline=False)
+    # embed.add_field(name="Suby", value="Tells The Cold Hard Truth",inline=False)
+    # embed.add_field(name="DueToday", value="Lets You Know What's Due Today!", inline=False) 
     embed.add_field(name="Due", value="Lets You Know What's Due On A Given Day!",inline=False) 
     embed.set_footer(text="Help requested by: {}".format(ctx.author.display_name))
     await ctx.send(embed=embed)
@@ -122,7 +143,7 @@ async def error(ctx, error):
         text = "Sorry {}, you do not have permissions to do that!".format(ctx.message.author)
         await bot.send_message(ctx.message.channel, text)
 
-@bot.command(name="ToDoUpdate", help="Shows What Is Due Today!")
+@bot.command(name="Update", help="Shows What Is Due Today!")
 @has_permissions(administrator=True)
 async def ToDoThisWeek(ctx):
     embed=discord.Embed(title="What's Due This Week?", description=description, color=discord.Color.purple())
@@ -154,7 +175,7 @@ async def desc(ctx, *args):
     description = ' '.join(args[0:])
     await ctx.send("Description set!")
 
-@bot.command(name="ToDoSet", help="Set The Deliverables Due Each Day")
+@bot.command(name="Set", help="Set The Deliverables Due Each Day")
 @commands.check(is_user)
 async def ToDoSet(ctx, *args):
     day = args[0].title()
@@ -169,19 +190,27 @@ async def ToDoSet(ctx, *args):
     print(cursor[day])
     await ctx.send("Done")
 
-@bot.command(name="ToDoClear", help="Set The Deliverables Due Each Day")
+@bot.command(name="Clear", help="Clear deliverables")
 @commands.check(is_user)
-async def ToDoSet(ctx, day):
-    day = day.title()
-    counter = 0
-    for x in days:
-        if day == x:
-            break
-        counter +=1
-    toDo.update_one({'index': counter}, {'$set': {day: []}})
-    cursor = toDo.find()[counter]
-    print(cursor[day])
-    await ctx.send("Done")
+async def Clear(ctx, day = 'null'):
+    if (day != 'null'):
+        day = day.title()
+        counter = 0
+        for x in days:
+            if day == x:
+                break
+            counter +=1
+        toDo.update_one({'index': counter}, {'$set': {day: []}})
+        cursor = toDo.find()[counter]
+        print(cursor[day])
+        await ctx.send("Done")
+    else:
+        counter = 0
+        for x in days:
+            toDo.update_one({'index': counter}, {'$set': {x: []}})
+            counter +=1
+        await ctx.send("Done")
+
 
 
 @bot.command(name="DueToday", help="Shows What Is Due Today!")
