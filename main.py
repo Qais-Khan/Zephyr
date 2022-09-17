@@ -134,7 +134,7 @@ async def ToDoThisWeek(ctx):
         counter+=1
 
     embed.set_footer(text="Requested by: {}".format(ctx.author.display_name))
-    channel = bot.get_channel(826267281696489512)
+    channel = bot.get_channel(952400947823398955)
     await channel.send(embed=embed)
 
 @ToDoThisWeek.error
